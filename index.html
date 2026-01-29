@@ -81,7 +81,15 @@
             align-items: center;
             width: 100%;
             margin: 0 auto;
-            gap: 10px;
+            gap: 1rem;
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        .desktop-only {
+            display: flex;
         }
 
         .logo {
@@ -100,8 +108,8 @@
         }
 
         .logo-icon {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             border-radius: var(--border-radius-md);
         }
 
@@ -120,7 +128,8 @@
 
         .search-input {
             width: 100%;
-            padding: 12px 20px 12px 45px;
+            height: 40px;
+            padding: 10px 20px 10px 45px;
             background-color: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-md);
@@ -148,11 +157,12 @@
             color: white;
             border: none;
             border-radius: var(--border-radius-md);
-            padding: 12px 25px;
+            padding: 11px 25px;
             font-weight: 600;
             cursor: pointer;
             transition: all var(--transition-duration);
             white-space: nowrap;
+            height: 40px;
         }
 
         .search-btn:hover {
@@ -636,7 +646,7 @@
         @media (max-width: 1200px) {
             .main-container {
                 flex-direction: column;
-                margin-top: calc(var(--header-height) + 10px);
+                /* margin-top: calc(var(--header-height) + 10px); */
             }
 
             .content {
@@ -659,13 +669,13 @@
                 transform: translateX(0);
             }
 
-            header {
+            /* header {
                 left: 0;
                 right: 0;
                 top: 0;
                 border-radius: 0;
                 margin: 0;
-            }
+            } */
 
             footer {
                 margin: 10px 0;
@@ -676,14 +686,6 @@
             .servers-grid {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             }
-        }
-
-        .mobile-only {
-            display: none;
-        }
-
-        .desktop-only {
-            display: flex;
         }
 
         @media (max-width: 768px) {
@@ -708,6 +710,14 @@
 
             .desktop-only {
                 display: none;
+            }
+
+            :root {
+                --header-height: 74px;
+            }
+
+            .header {
+                padding: 1rem;
             }
 
             /* Responsive таблицы */
