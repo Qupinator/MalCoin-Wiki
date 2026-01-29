@@ -1,0 +1,3474 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MalWiki - Вики по игре Малиновка</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --accent-red: #e81e3f;
+            --accent-red-light: rgba(232, 30, 63, 0.15);
+            --accent-red-dark: #b81430;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #999999;
+            --border-color: #333333;
+            --border-light: #444444;
+            --success-color: #10b981;
+            --online-dot: #10b981;
+            --offline-dot: #ef4444;
+            --sidebar-width: 280px;
+            --header-height: 80px;
+            --border-radius-lg: 10px;
+            --border-radius-md: 10px;
+            --border-radius-sm: 10px;
+            --transition-duration: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--accent-red-dark);
+            border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Хедер */
+        header {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            z-index: 1000;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            border-radius: var(--border-radius-lg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 0 20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 0 auto;
+            gap: 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            background: linear-gradient(to right, var(--accent-red), #ff4b2b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--border-radius-md);
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all var(--transition-duration);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(232, 30, 63, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            background-color: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 12px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-duration);
+            white-space: nowrap;
+        }
+
+        .search-btn:hover {
+            background-color: var(--accent-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 30, 63, 0.3);
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            display: flex;
+            flex: 1;
+            margin-top: calc(var(--header-height) + 20px);
+            padding: 0 10px;
+        }
+
+        /* Боковая панель */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            overflow-y: auto;
+            position: sticky;
+            top: calc(var(--header-height) + 20px);
+            height: calc(100vh - var(--header-height) - 30px);
+            padding: 1.5rem 0;
+            transition: transform var(--transition-duration) ease;
+            border-radius: var(--border-radius-lg);
+            flex-shrink: 0;
+        }
+
+        .sidebar-content {
+            padding: 0 1.5rem;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title i {
+            color: var(--accent-red);
+        }
+
+        .category-list {
+            list-style: none;
+        }
+
+        .category-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .category-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .category-link:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .category-link.active {
+            background-color: var(--accent-red-light);
+            color: var(--accent-red);
+            font-weight: 600;
+            border-left: 3px solid var(--accent-red);
+        }
+
+        .subcategory-list {
+            list-style: none;
+            padding-left: 1.5rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .category-item.active .subcategory-list {
+            display: block;
+        }
+
+        .subcategory-item {
+            margin-bottom: 0.3rem;
+        }
+
+        .subcategory-link {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0.8rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .subcategory-link:hover {
+            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .subcategory-link.active {
+            color: var(--accent-red);
+            font-weight: 500;
+        }
+
+        .category-toggle {
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+
+        .category-item.active .category-toggle {
+            transform: rotate(90deg);
+            color: var(--accent-red);
+        }
+
+        /* Основной контент */
+        .content {
+            flex: 1;
+            padding: 0 0 10px 10px;
+        }
+
+        /* Главная страница */
+        .home-page {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Мониторинг онлайн */
+        .monitoring-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--accent-red);
+        }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .server-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            transition: all var(--transition-duration) ease;
+        }
+
+        .server-card:hover {
+            border-color: var(--accent-red);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .server-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .server-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.online {
+            background-color: var(--online-dot);
+            box-shadow: 0 0 8px var(--online-dot);
+        }
+
+        .online-count {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            line-height: 1;
+        }
+
+        .total-online {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .total-label {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .total-count {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-red);
+        }
+
+        /* Блок поиска на главной */
+        .main-search-section {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .main-search-box {
+            display: flex;
+            gap: 10px;
+        }
+
+        .main-search-input {
+            flex: 1;
+            padding: 15px 20px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .main-search-input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 0 3px rgba(232, 30, 63, 0.2);
+        }
+
+        .main-search-btn {
+            background-color: var(--accent-red);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-md);
+            padding: 0 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-duration);
+            white-space: nowrap;
+        }
+
+        .main-search-btn:hover {
+            background-color: var(--accent-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 30, 63, 0.3);
+        }
+
+        /* Карточки статей */
+        .article-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .article-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .article-content h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 0.8rem;
+            color: var(--text-primary);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .article-content h3 {
+            font-size: 1.2rem;
+            margin: 1.2rem 0 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .article-content p {
+            margin-bottom: 1rem;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Улучшенный стиль таблиц */
+        .article-content table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .article-content th {
+            background-color: var(--accent-red-light);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .article-content td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .article-content tr:last-child td {
+            border-bottom: none;
+        }
+
+        .article-content tr:hover td {
+            background-color: var(--bg-tertiary);
+            transition: background-color 0.2s;
+        }
+
+        .article-content code {
+            background-color: rgba(232, 30, 63, 0.1);
+            color: var(--accent-red);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        /* Футер */
+        footer {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            border-radius: var(--border-radius-lg);
+            margin-top: 10px;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+            gap: 1rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            white-space: nowrap;
+        }
+
+        .footer-disclaimer {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-align: center;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        @media (max-width: 1631px) {
+            .servers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            }
+        }
+
+
+        @media (max-width: 1383px) {
+            .servers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            }
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                margin-top: calc(var(--header-height) + 10px);
+            }
+
+            .content {
+                padding: 0px;
+            }
+
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 280px;
+                height: 100vh;
+                transform: translateX(-100%);
+                z-index: 1001;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            header {
+                left: 0;
+                right: 0;
+                top: 0;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            footer {
+                margin: 10px 0;
+            }
+        }
+
+        @media (max-width: 893px) {
+            .servers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        .desktop-only {
+            display: flex;
+        }
+
+        @media (max-width: 768px) {
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .search-input {
+                max-height: 40px;
+                padding: 10px 36px;
+            }
+
+            .search-icon {
+                left: 12px;
+            }
+
+            .mobile-only {
+                display: flex;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+
+            /* Responsive таблицы */
+            .article-content table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                padding: 0px;
+            }
+
+            .article-card,
+            .monitoring-section,
+            .main-search-section,
+            .welcome-card {
+                padding: 1rem;
+            }
+
+            .article-title {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1rem;
+            }
+        }
+
+        /* Анимации */
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .online-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Кнопка меню для мобильных */
+        .menu-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            width: 40px;
+            height: 40px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .menu-toggle:hover {
+            background-color: var(--accent-red-light);
+            color: var(--accent-red);
+        }
+
+        @media (max-width: 1200px) {
+            .menu-toggle {
+                display: flex;
+            }
+        }
+
+        /* Оверлей для мобильного меню */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* Приветственный блок */
+        .welcome-card {
+            background-color: var(--bg-secondary);
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .welcome-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature-item {
+            background-color: rgba(232, 30, 63, 0.1);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(232, 30, 63, 0.2);
+            transition: all var(--transition-duration) ease;
+            cursor: pointer;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(232, 30, 63, 0.3);
+        }
+
+        .feature-icon {
+            color: var(--accent-red);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .mobile-search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 30px;
+            width: 30px;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Оверлей для мобильного меню -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Хедер -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img class="logo-icon" src="mwlogo.png">
+                <span class="logo-text desktop-only">MalWiki</span>
+            </div>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Поиск по вики...">
+                    <button class="search-btn mobile-search-btn mobile-only"><i class="bi bi-search"></i></button>
+                </div>
+                <button class="search-btn desktop-only">Найти</button>
+            </div>
+            <div class="menu-toggle" id="menuToggle">
+                <i class="bi bi-list"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контейнер -->
+    <div class="main-container">
+        <!-- Боковая панель -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-content">
+                <!-- Основное -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><i class="bi bi-info-circle"></i> Основное</h3>
+                    <ul class="category-list">
+                        <li class="category-item active">
+                            <a href="#home" class="category-link" data-page="home">
+                                <span>Главная</span>
+                                <i class="bi bi-house category-toggle"></i>
+                            </a>
+                        </li>
+                        <li class="category-item">
+                            <a href="#legal" class="category-link" data-page="legal">
+                                <span>Юридическая информация</span>
+                                <i class="bi bi-chevron-right category-toggle"></i>
+                            </a>
+                            <ul class="subcategory-list">
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="user-agreement">Пользовательское
+                                        соглашение</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="public-offer">Публичная
+                                        оферта</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Игровые механики -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><i class="bi bi-gear"></i> Игровые механики</h3>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <a href="#game-mechanics" class="category-link" data-page="game-mechanics">
+                                <span>Все механики</span>
+                                <i class="bi bi-chevron-right category-toggle"></i>
+                            </a>
+                            <ul class="subcategory-list">
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="voice-chat">Голосовой чат</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="quick-menu">Меню быстрых
+                                        действий</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="interaction-mode">Режим
+                                        взаимодействия</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="passive-mode">Пассивный режим</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="green-zone">Зеленая зона</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Занятия -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><i class="bi bi-briefcase"></i> Занятия</h3>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <a href="#jobs" class="category-link" data-page="jobs">
+                                <span>Все занятия</span>
+                                <i class="bi bi-chevron-right category-toggle"></i>
+                            </a>
+                            <ul class="subcategory-list">
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="temporary-jobs">Временные
+                                        работы</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="main-jobs">Основные работы</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="employment">Трудоустройство</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="driving-school">Автошкола</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Имущество -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><i class="bi bi-house-door"></i> Имущество</h3>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <a href="#property" class="category-link" data-page="property">
+                                <span>Все об имуществе</span>
+                                <i class="bi bi-chevron-right category-toggle"></i>
+                            </a>
+                            <ul class="subcategory-list">
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="businesses">Бизнесы</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="housing">Жильё</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="personal-transport">Личный
+                                        транспорт</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="weapons">Оружие</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="phone">Телефон</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Игровые показатели -->
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><i class="bi bi-bar-chart"></i> Игровые показатели</h3>
+                    <ul class="category-list">
+                        <li class="category-item">
+                            <a href="#stats" class="category-link" data-page="stats">
+                                <span>Все показатели</span>
+                                <i class="bi bi-chevron-right category-toggle"></i>
+                            </a>
+                            <ul class="subcategory-list">
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="character-level">Уровень
+                                        персонажа</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="wanted">Розыск</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="documents">Документы</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="skills">Навыки</a>
+                                </li>
+                                <li class="subcategory-item">
+                                    <a href="#" class="subcategory-link" data-article="hunger">Голод</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="content">
+            <!-- Главная страница (активна по умолчанию) -->
+            <div class="page-content active" id="home-page">
+                <!-- Приветственный блок -->
+                <div class="welcome-card">
+                    <h1 class="welcome-title">Добро пожаловать в MalWiki!</h1>
+                    <p class="welcome-text">Фанатская вики-энциклопедия по CRMP игре "Малиновка". Здесь вы найдете
+                        подробную информацию об игровых механиках, занятиях, имуществе, показателях персонажа и многом
+                        другом.</p>
+                </div>
+
+                <!-- Мониторинг онлайн -->
+                <div class="monitoring-section">
+                    <h2 class="section-title"><i class="bi bi-hdd-stack"></i> Мониторинг онлайна</h2>
+
+                    <div class="servers-grid">
+                        <!-- Сервер 1 -->
+                        <div class="server-card">
+                            <div class="server-header">
+                                <div class="server-name">Малиновка #1</div>
+                                <div class="server-status">
+                                    <span class="status-dot online online-pulse"></span>
+                                    <span>ОНЛАЙН</span>
+                                </div>
+                            </div>
+                            <div class="online-count">0</div>
+                        </div>
+
+                        <!-- Сервер 2 -->
+                        <div class="server-card">
+                            <div class="server-header">
+                                <div class="server-name">Малиновка #2</div>
+                                <div class="server-status">
+                                    <span class="status-dot online online-pulse"></span>
+                                    <span>ОНЛАЙН</span>
+                                </div>
+                            </div>
+                            <div class="online-count">0</div>
+                        </div>
+
+                        <!-- Сервер 3 -->
+                        <div class="server-card">
+                            <div class="server-header">
+                                <div class="server-name">Малиновка #3</div>
+                                <div class="server-status">
+                                    <span class="status-dot online online-pulse"></span>
+                                    <span>ОНЛАЙН</span>
+                                </div>
+                            </div>
+                            <div class="online-count">0</div>
+                        </div>
+
+                        <!-- Сервер 4 -->
+                        <div class="server-card">
+                            <div class="server-header">
+                                <div class="server-name">Малиновка #4</div>
+                                <div class="server-status">
+                                    <span class="status-dot online online-pulse"></span>
+                                    <span>ОНЛАЙН</span>
+                                </div>
+                            </div>
+                            <div class="online-count">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Общий онлайн -->
+                    <div class="total-online">
+                        <div class="total-label">Общий онлайн на всех серверах</div>
+                        <div class="total-count" id="totalOnline">0</div>
+                    </div>
+                </div>
+
+                <!-- Быстрые ссылки -->
+                <div class="welcome-card">
+                    <h2 class="section-title"><i class="bi bi-lightning-charge"></i> Популярные статьи</h2>
+                    <div class="features-grid">
+                        <div class="feature-item" data-article="voice-chat">
+                            <div class="feature-icon"><i class="bi bi-mic"></i></div>
+                            <div class="feature-text">Голосовой чат</div>
+                        </div>
+                        <div class="feature-item" data-article="temporary-jobs">
+                            <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                            <div class="feature-text">Временные работы</div>
+                        </div>
+                        <div class="feature-item" data-article="businesses">
+                            <div class="feature-icon"><i class="bi bi-shop"></i></div>
+                            <div class="feature-text">Бизнесы</div>
+                        </div>
+                        <div class="feature-item" data-article="character-level">
+                            <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                            <div class="feature-text">Уровень персонажа</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Контейнер для статей -->
+            <div id="articles-container"></div>
+            <footer>
+                <div class="footer-container">
+                    <div class="footer-logo">MalWiki</div>
+                    <p class="footer-disclaimer">
+                        Все материалы сайта являются фантазией и относятся исключительно к игровому процессу.
+                        Администрация не
+                        поддерживает и не пропагандирует противоправные действия в реальной жизни.
+                    </p>
+                    <div>© 2026 MalWiki. Все права защищены.</div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Шаблон для статей -->
+    <template id="article-template">
+        <div class="page-content article-page">
+            <div class="article-card">
+                <div class="article-header">
+                    <h1 class="article-title" id="article-title">Заголовок статьи</h1>
+                    <div class="article-meta">
+                        <span><i class="bi bi-clock"></i> Обновлено: <span id="article-date">15.10.2023</span></span>
+                        <span><i class="bi bi-tag"></i> <span id="article-category">Категория</span></span>
+                    </div>
+                </div>
+                <div class="article-content" id="article-content">
+                    Содержимое статьи
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Шаблоны для всех статей -->
+    <template id="voice-chat-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Голосовой чат</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые механики</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Голосовой чат — внутриигровое средство, позволяющее игрокам общаться между собой посредством голоса.
+                </p>
+
+                <h2>Применение</h2>
+                <p>Чтобы говорить в голосовой чат, необходимо нажать и удерживать клавишу <strong>X (англ.)</strong></p>
+                <p>Чтобы говорить в рабочую рацию, необходимо нажать и удерживать клавишу <strong>End</strong> (По
+                    умолчанию выключена. /menu > Настройки аккаунта > Рабочая голосовая рация)</p>
+
+                <h2>Настройки микрофона</h2>
+                <p>Меню настройки микрофона открывается после нажатия клавиши <strong>O (англ.)</strong></p>
+                <p>По умолчанию в качестве микрофона используется стандартное устройство ввода в Windows. Игрок может
+                    выбрать любое из доступных.</p>
+
+                <h2>Громкость</h2>
+                <p>Игрок может настроить громкость своего голоса, игроков вокруг и говорящих в рацию.</p>
+                <ul>
+                    <li>Громкость микрофона (От 0 до 100%)</li>
+                    <li>Громкость игроков (От 0 до 200%)</li>
+                    <li>Громкость рации (От 0 до 200%)</li>
+                </ul>
+
+                <h2>Режим ввода</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Режим</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>По нажатию</td>
+                            <td>Включение и выключение голосового чата по одному нажатию кнопки</td>
+                        </tr>
+                        <tr>
+                            <td>При удержании</td>
+                            <td>Включение голосового чата при удержании кнопки</td>
+                        </tr>
+                        <tr>
+                            <td>По голосу</td>
+                            <td>Включение голосового чата при определённом уровне громкости звука в микрофоне</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Клавиша активации</h2>
+                <p>Игрок может выбрать любую из свободных клавиш для использования микрофона и рации.</p>
+
+                <h2>Чувствительность активации</h2>
+                <p>Эта настройка определяет при каком уровне громкости звука в микрофоне система включит голосовой чат.
+                </p>
+                <p>Проверить текущий уровень звука вокруг вас можно с помощью индикатора на фоне настройки.</p>
+
+                <h2>Дополнительные опции</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Опция</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Использовать 3D-звук</td>
+                            <td>Распределяет звук таким образом, что в зависимости от положения вашей камеры Вы будете
+                                слышать звук в левом наушнике от игроков, которые находятся слева и в правом от игроков,
+                                которые находятся справа</td>
+                        </tr>
+                        <tr>
+                            <td>Использовать DirectSound</td>
+                            <td>Использовать DirectSound вместо WASAPI. Попробуйте установить эту опцию, если вы
+                                испытываете проблемы с пропаданием звука через время после входа в игру. Для применения
+                                этой опции необходимо перезапустить игру.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Ограничения</h2>
+                <p>На голосовой чат распространяются ограничения, регламентированные правилами игры</p>
+                <p>Чтобы отключить звук грубого или надоедливого игрока, используйте команду
+                    <code>/vm [ID игрока]</code>
+                </p>
+            </div>
+        </div>
+    </template>
+
+    <template id="quick-menu-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Меню быстрых действий</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые механики</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Меню быстрых действий — интерфейс взаимодействия с игрой и игровыми объектами.</p>
+                <p>Меню быстрых действий позволяет управлять личным транспортом и пассивным режимом, использовать
+                    различные предметы, просматривать документы, навыки и удостоверения, а также имеет другие
+                    возможности.</p>
+
+                <h2>Управление</h2>
+                <p>Навигация по меню происходит с помощью курсора. Также меню поддерживает выбор пунктов через колесико
+                    мыши, стрелки на клавиатуре и клавиши Enter и Esc.</p>
+
+                <h2>Меню персонажа</h2>
+                <ul>
+                    <li>Загрузить личный транспорт</li>
+                    <li>Включить/выключить пассивный режим</li>
+                    <li>Использовать анимацию</li>
+                    <li>Посмотреть документы</li>
+                    <li>Посмотреть удостоверения или навыки</li>
+                    <li>Лечь спать / Проснуться</li>
+                    <li>Надеть/снять маску</li>
+                    <li>Съесть еду</li>
+                    <li>Принять вещества</li>
+                    <li>Использовать аптечку</li>
+                </ul>
+
+                <h2>Управление личным транспортом</h2>
+                <ul>
+                    <li>Документы на ТС</li>
+                    <li>Руководство по эксплуатации</li>
+                    <li>Построить маршрут до транспорта</li>
+                    <li>Отбуксировать транспорт</li>
+                    <li>Продать транспорт</li>
+                    <li>Выгрузить транспорт</li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <template id="interaction-mode-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Режим взаимодействия</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые механики</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Для взаимодействия с игроками и транспортом предусмотрен режим взаимодействия. Чтобы попасть в меню
+                    взаимодействия, необходимо зажать клавишу Tab, навести прицел на другого игрока или транспорт, а
+                    затем отпустить клавишу.</p>
+
+                <h2>Взаимодействие с игроками</h2>
+                <ul>
+                    <li>Пожаловаться (Если игрок нарушает правила игры, то на него можно пожаловаться. После выбора
+                        этого пункта будет предложено выбрать причину.)</li>
+                    <li>Поприветствовать (Предложить пожать игроку руку. Игрок должен принять входящее предложение)</li>
+                    <li>Показать документы (Игрок должен принять входящее предложение)</li>
+                    <li>Показать удостоверения или навыки (Игрок должен принять входящее предложение)</li>
+                    <li>Показать документы на ТС (Игрок должен принять входящее предложение)</li>
+                    <li>Передать предмет (Деньги, металл, аптечку, маску, ремонтный набор или подарить цветы)</li>
+                </ul>
+
+                <h2>Взаимодействие с транспортом</h2>
+                <ul>
+                    <li>Открыть/закрыть транспорт</li>
+                    <li>Вставить/вытащить ключ (Необходимо сидеть за рулём транспорта)</li>
+                    <li>Припарковать транспорт (Необходимо сидеть за рулём и завести двигатель)</li>
+                    <li>Перевернуть домкратом</li>
+                    <li>Починить ремонтным набором</li>
+                    <li>Заправить из канистры</li>
+                    <li>Открыть/закрыть капот</li>
+                    <li>Открыть/закрыть багажник</li>
+                </ul>
+
+                <h2>Входящие предложения</h2>
+                <p>Входящие предложения отображаются на экране под счетчиком текущего баланса. Управление сделкой
+                    осуществляется нажатием на клавиши Y/N</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="passive-mode-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Пассивный режим</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые механики</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Пассивный режим — состояние персонажа, в котором он неуязвим для ударов и выстрелов других игроков.
+                </p>
+
+                <h2>Управление</h2>
+                <p>Управление режимом происходит с помощью меню быстрых действий (Клавиша Tab > Включить/выключить
+                    пассивный режим). В пассивном режиме игрок неуязвим к ударам и выстрелам других игроков (кроме
+                    режима задержания), но при этом он сам не может использовать оружие и наносить урон, у него
+                    отключается осязаемость с другими игроками и транспортом.</p>
+
+                <p>Игрок в пассивном режиме имеет индикатор рядом с никнеймом, отображаемый как иконка ☯ (Инь и ян).</p>
+
+                <h2>Ограничения</h2>
+                <p>Пассивный режим не могут использовать участники ОПГ и сотрудники государственных организаций во время
+                    рабочего дня. Пассивный режим автоматически выключится если: получить розыск, упасть в обморок или
+                    зайти на территорию Войсковой части, Полиции, Правительства или любой ОПГ. В пассивном режиме
+                    недоступна маска.</p>
+
+                <h2>Примечания</h2>
+                <p>Пассивный режим автоматически активируется для игроков первого и второго уровня, а для игроков 3-4
+                    уровней предусмотрена подсказка после входа в игру. Стандартная скорость включения и отключения
+                    режима - 15 секунд. Если Вы находитесь в зеленой зоне 15 и более секунд, то режим включится
+                    мгновенно.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="green-zone-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Зеленая зона</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые механики</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Зеленая зона — область карты, в которой персонажи не могут наносить друг другу урон.</p>
+
+                <h2>Взаимодействие персонажей</h2>
+                <p>Внутри зеленой зоны персонажи не могут навредить друг другу ни в ближнем бою, ни с помощью
+                    огнестрельного оружия. Однако персонажи внутри Зеленой зоны могут упасть в голодный обморок, могут
+                    утонуть или разбиться, упав с высоты.</p>
+
+                <p>Персонаж, находящийся вне Зеленой зоны не может нанести урон персонажу, находящемуся внутри зеленой
+                    зоны. Хотя будет выполнена анимация атаки и израсходуются патроны, урон все равно не будет нанесен.
+                    В ситуации, когда оба персонажа находятся в зеленой зоне, не будет ни анимации атаки ни расхода
+                    боеприпасов.</p>
+
+                <p>Полиция и Правительство могут наносить урон персонажам в любой Зеленой зоне без ограничений.</p>
+
+                <h2>Территории Зеленой зоны</h2>
+                <ul>
+                    <li>пгт. Батырево целиком, включая Автобусные станции, Казино, Мэрию и БЦРБ</li>
+                    <li>Временные работы: Четыре локации основных работ, включающие Дальнобойщика, Пилота, Развозчика
+                        (также на этой территории находится временная работа Технолог), Автомеханика</li>
+                    <li>Мэрия, Автовокзал, Военкомат и Автосалон в пгт. Бусаево</li>
+                    <li>Авторынок в п. Заречном</li>
+                    <li>Правительство, Мэрия, Автовокзал, Автосалон, Клуб и Казино в г. Южном</li>
+                </ul>
+
+                <p>Границы Зеленой зоны не имеют визуальных обозначений ни в самой локации, ни на мини-карте. На
+                    большинстве временных и постоянных работ, распространение Зеленой зоны будет совпадать с территорией
+                    локации. Определить, что персонаж находится в Зеленой зоне возможно по наличию соответствующей
+                    надписи под мини-картой.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="temporary-jobs-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Временные работы</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Занятия</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Временные работы — один из трех видов занятости, который позволяет зарабатывать игровую валюту.</p>
+
+                <h2>Особенности</h2>
+                <p>Отличительной чертой и уникальностью временных работ (кроме работы автоугонщика) является способность
+                    получать прибыль будучи трудоустроенным на одну из основных работ или находясь в государственных и
+                    нелегальных организациях.</p>
+                <p>Временные работы не требуют трудоустройства в мэрии.</p>
+
+                <h2>Работы</h2>
+                <p>Всего существуют 5 различных мест, где вы сможете найти подработку. Каждое из них можно посетить в
+                    любое удобное время.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Временная работа</th>
+                            <th>Описание</th>
+                            <th>Местоположение</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ферма</td>
+                            <td>Доступна с первого уровня персонажа. Работа заключается в сборе урожая на одном из полей
+                                и доставки его на склад.</td>
+                            <td>п. Роговичи (/gps > Временные работы > Ферма)</td>
+                        </tr>
+                        <tr>
+                            <td>Лесопилка</td>
+                            <td>Доступна с первого уровня персонажа. Работа заключается в вырубке леса и доставке бревен
+                                на склад.</td>
+                            <td>п. Роговичи (/gps > Временные работы > Лесопилка)</td>
+                        </tr>
+                        <tr>
+                            <td>Шахта</td>
+                            <td>Доступна с первого уровня персонажа. Работа заключается в добыче руды и доставке ее в
+                                печь.</td>
+                            <td>пгт. Батырево (/gps > Временные работы > Шахта)</td>
+                        </tr>
+                        <tr>
+                            <td>Технолог</td>
+                            <td>Доступна с первого уровня персонажа. Работа заключается в сборке на станках продуктов и
+                                доставки их на конвейер.</td>
+                            <td>пгт. Бусаево (/gps > Временные работы > Технолог)</td>
+                        </tr>
+                        <tr>
+                            <td>Автоугонщик</td>
+                            <td>Доступна с 3 уровня персонажа. Работа заключается в поиске отмеченного авто, взлома и
+                                доставки его до точки сбыта. Имеется уровень квалификации, который позволяет повысить
+                                заработок.</td>
+                            <td>г. Южный (/gps > Временные работы > Автоугонщик)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="main-jobs-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Основные работы</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Занятия</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Основные работы — собирательное наименование для шести видов профессий. Это альтернатива занятости в
+                    государственных или нелегальных организациях.</p>
+
+                <h2>Профессии</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Основная работа</th>
+                            <th>Минимальный уровень</th>
+                            <th>Дополнительные требования</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Водитель автобуса</td>
+                            <td>2</td>
+                            <td>Медсправка, Водительское удостоверение</td>
+                        </tr>
+                        <tr>
+                            <td>Таксист</td>
+                            <td>2</td>
+                            <td>Медсправка, Водительское удостоверение, Лицензия таксиста, Мобильный телефон, Личный или
+                                арендованный в салоне транспорт</td>
+                        </tr>
+                        <tr>
+                            <td>Автомеханик</td>
+                            <td>3</td>
+                            <td>Медсправка, Водительское удостоверение</td>
+                        </tr>
+                        <tr>
+                            <td>Развозчик</td>
+                            <td>4</td>
+                            <td>Медсправка, Водительское удостоверение</td>
+                        </tr>
+                        <tr>
+                            <td>Пилот</td>
+                            <td>6</td>
+                            <td>Медсправка, Водительское удостоверение, Лицензия пилота</td>
+                        </tr>
+                        <tr>
+                            <td>Дальнобойщик</td>
+                            <td>7</td>
+                            <td>Медсправка, Водительское удостоверение, Наличие 13+ уровня Развозчика</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Трудоустройство</h2>
+                <p>Трудоустроиться на основную работу можно в любой из Мэрий (/gps > Важные места > Мэрия). Внутри
+                    здания Мэрии, игроку необходимо найти маркер "Трудоустройство", обозначенный коричневым портфелем. В
+                    появившемся меню необходимо выбрать нужную профессию.</p>
+
+                <h2>Смена профессии</h2>
+                <p>Чтобы сменить профессию, необходимо повторно найти маркер и выбрать новую работу.</p>
+
+                <h2>Ограничения</h2>
+                <p>Ограничением для трудоустройства является недостаточный уровень персонажа или членство в организации.
+                    Для всех профессий потребуется наличие медицинской справки и водительского удостоверения.</p>
+                <p>Для работы "Таксист" нужна лицензия, мобильный телефон Malsung Malaxy M10 (или дороже) и транспорт
+                    (личный или арендованный).</p>
+                <p>Для работы "Дальнобойщик" дополнительным требованием является минимум 5 уровень на работе
+                    "Развозчик".</p>
+
+                <h2>Особенности</h2>
+                <p>Все типы основных работы подразумевают занятость на транспорте. На большинстве задействована
+                    арендуемая техника, но некоторые работы (таксист, развозчик, дальнобойщик) предполагают
+                    использование личных автомобилей.</p>
+
+                <h2>Рабочий день</h2>
+                <p><strong>Начало рабочего дня:</strong> Рабочий день можно начинать в независимости от времени суток в
+                    игре. Для всех профессий точка начала смены маркируется синей футболкой. Чтобы найти место начала
+                    рабочего дня, можно использовать команду /gps > Основные работы. Исключение — таксист, активирующий
+                    рабочий день при помощи мобильного телефона в любом месте.</p>
+                <p><strong>Завершение рабочего дня:</strong> В большинстве случаев рабочий день можно завершить, нажав
+                    клавишу J и выбрав соответствующий пункт.</p>
+                <p>Рабочий день завершится автоматически в случае полной потери здоровья персонажем или в случае
+                    уничтожения рабочего транспорта. Также нахождение вне транспорта более 90 секунд или потеря прицепа
+                    более чем на 90 секунд автоматически завершат рабочую смену.</p>
+
+                <h2>Отличие от временной работы</h2>
+                <p>Основная работа требует трудоустройства перед началом смены. Запись о текущем трудоустройстве будет
+                    видна в паспорте и статистике персонажа.</p>
+                <p>Основная работа не может совмещаться с деятельностью в организации. Если вы не начали рабочий день на
+                    основной работе, то можете выполнять временную работу, сохраняя трудоустройство.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="employment-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Трудоустройство</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Занятия</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Трудоустроиться на основную работу можно в любой из Мэрий (/gps > Важные места > Мэрия). Внутри
+                    здания Мэрии, игроку необходимо найти маркер "Трудоустройство", обозначенный коричневым портфелем.
+                </p>
+
+                <h2>Процесс трудоустройства</h2>
+                <ol>
+                    <li>Найдите ближайшую Мэрию с помощью команды /gps > Важные места > Мэрия</li>
+                    <li>Войдите в здание и найдите маркер "Трудоустройство"</li>
+                    <li>В появившемся меню выберите желаемую профессию</li>
+                    <li>Убедитесь, что у вас есть все необходимые документы и требования</li>
+                    <li>Подтвердите выбор профессии</li>
+                </ol>
+
+                <h2>Требования к трудоустройству</h2>
+                <ul>
+                    <li>Достижение минимального уровня для выбранной профессии</li>
+                    <li>Наличие медицинской справки</li>
+                    <li>Наличие водительского удостоверения (для большинства работ)</li>
+                    <li>Отсутствие членства в организации (для некоторых работ)</li>
+                    <li>Дополнительные требования для конкретных профессий (лицензии, оборудование)</li>
+                </ul>
+
+                <h2>Проверка статуса трудоустройства</h2>
+                <p>Текущая профессия отображается в паспорте персонажа. Чтобы посмотреть паспорт, используйте меню
+                    быстрых действий (Клавиша Tab > Посмотреть документы).</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="driving-school-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Автошкола</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Занятия</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Автошкола — место в игре, где игроки получают водительское удостоверение.</p>
+
+                <h2>Местоположение</h2>
+                <p>Автошкола находится в пгт. Бусаево. Для того, что бы найти автошколу, необходимо проложить маршрут с
+                    помощью команды /gps > Важные места > Автошкола.</p>
+
+                <h2>Экзамен</h2>
+                <p>Для того, что бы получить водительское удостоверение, необходимо сдать экзамен. Неоплаченные штрафы
+                    не дадут Вам начать его выполнение.</p>
+                <p>Для начала экзамена необходимо встать на маркер в виде "$".</p>
+                <p>Экзамен состоит из двух частей:</p>
+
+                <h3>Теоретическая часть</h3>
+                <p>Для сдачи теоретической части необходимо ответить на 11 вопросов, которые состоят из правил дорожного
+                    движения и основ управления автомобилем.</p>
+                <p>В здании автошколы есть информационный стенд (маркер i), подойдя к которому можно изучить основы
+                    управления авто и ПДД.</p>
+
+                <h3>Управление транспортом</h3>
+                <p>Управление системами транспорта осуществляется путем нажатия клавиш:</p>
+                <ul>
+                    <li>Зажатие левого Ctrl — включить/выключить двигатель.</li>
+                    <li>Левый Alt или ЛКМ - включить/выключить фары.</li>
+                    <li>L или через меню быстрых действий: Клавиша Tab > Взаимодействовать с транспортом >
+                        Открыть/закрыть транспорт — закрыть или открыть транспорт.</li>
+                    <li>K или через меню быстрых действий: Клавиша Tab > Взаимодействовать с транспортом >
+                        Вставить/вытащить ключ — вставить или вытащить ключ из замка зажигания.</li>
+                    <li>J - меню рабочего транспорта.</li>
+                    <li>Y - включить или выключить сигнальные огни.</li>
+                    <li>Q или Z — включить или выключить левый указатель поворота.</li>
+                    <li>E или C — включить или выключить правый указатель поворота.</li>
+                    <li>N — включить или выключить ограничитель скорости.</li>
+                    <li>H — посигналить или открыть шлагбаум/ворота.</li>
+                </ul>
+                <p>Починить автомобиль может автомеханик, вызвать которого возможно с помощью команды /call 777 или
+                    ремонт можно выполнить самостоятельно с помощью ремонтного набора через меню быстрых действий в
+                    режиме взаимодействия (Клавиша Tab > Починить ремонтным набором).</p>
+                <p>Заправка авто осуществляется на АЗС или с использованием канистры с помощью меню быстрых действий в
+                    режиме взаимодействия.</p>
+
+                <h3>ПДД</h3>
+                <ul>
+                    <li>В жилых зонах и дворовых территориях максимальная скорость движения составляет 20 км/ч.</li>
+                    <li>В населенных пунктах максимальная скорость движения не должна превышать 60 км/ч.</li>
+                    <li>На автомагистралях максимальная скорость движения не должна превышать 110 км/ч.</li>
+                    <li>Во всех остальных случаях максимальная скорость движения не должна превышать 90 км в час.</li>
+                    <li>Водитель обязан снизить скорость и прижаться к обочине при виде автомобиля с включенной сиреной.
+                    </li>
+                    <li>Сотрудник ГИБДД должен предъявить водителю необходимые документы, после чего водитель обязан
+                        показать всю необходимую документацию сотруднику ГИБДД.</li>
+                    <li>Если водитель попал в ДТП он должен включить аварийные огни, выйти из машины и вызвать с помощью
+                        команды /call скорую помощь, а так же ГИБДД.</li>
+                </ul>
+
+                <h3>Практическая часть</h3>
+                <p>После успешной сдачи теоретической части экзамена необходимо приступить к практической части. Для
+                    этого следует выйти на задний двор и встать на зеленый маркер для получения учебного транспорта.</p>
+                <p>Садитесь в транспорт, запустите двигатель и выезжайте с парковки. Для открытия ворот, посигнальте на
+                    клавишу H (англ.). Для успешного завершения экзамена и получения водительских прав необходимо
+                    сделать круг в пгт. Бусаево по чекпоинтам и вернуться обратно. Экзамен не будет сдан, если Вы
+                    получите штраф или разобьете учебный транспорт.</p>
+
+                <h2>Потеря водительского удостоверение</h2>
+                <p>Существует несколько способов потерять ваше водительское удостоверение, после того, как Вы успешно
+                    садите экзамен:</p>
+                <ul>
+                    <li>Изъятие водительского удостоверения сотрудником полиции.</li>
+                    <li>Получение 20 неоплаченных штрафов.</li>
+                </ul>
+                <p>В случае, если вы потеряете свое водительское удостоверение, вам будет необходимо сдать повторный
+                    экзамен. Начать экзамен будет невозможно, пока все штрафы не будут оплачены.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="businesses-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Бизнесы</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Имущество</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Бизнес — один из способ заработка игровой валюты. Всего существует 11 типов бизнеса: магазин 24/7,
+                    сотовый салон, казино, автосалон, магазин одежды, клуб, фитнес-центр, столовая, кинотеатр, частный
+                    банк и центр улучшения недвижимости. В бизнесах игроки получают большинство товаров и услуг на
+                    платной основе.</p>
+
+                <h2>Расположение</h2>
+                <p>В игре есть 37 различных бизнесов. Для того, чтобы найти конкретное предприятие на карте, необходимо
+                    воспользоваться командой /gps > Бизнесы.</p>
+
+                <h2>Покупка бизнеса</h2>
+                <p>Чтобы купить бизнес надо иметь второй уровень, получить лицензию на ведение бизнеса и иметь на руках
+                    нужное количество игровой валюты. Покупка бизнеса осущеставляется одним из двух способов:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Покупка у государства</td>
+                            <td>Бизнес продаётся по государственной стоимости. Цена каждого бизнеса уникальна и зависит
+                                от некоторых факторов (расположение, прибыль). Государственная стоимость и владелец
+                                бизнеса указаны у маркера входа. Если у бизнеса нет владельца, его может купить любой
+                                игрок через команду /buybusiness</td>
+                        </tr>
+                        <tr>
+                            <td>Покупка у игрока</td>
+                            <td>Если бизнес куплен другим игроком, он может продать его Вам. В этом случае цену
+                                назначает владелец. Если Вы согласны на сделку, просто согласитесь на предложение</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>После покупка бизнеса, Вы можете управлять им с помощью команды /business.</p>
+
+                <h2>Продажа бизнеса</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Продажа государству</td>
+                            <td>Вы можете продать бизнес государству. В этом случае с Вас взыщут налог в размере 35% от
+                                государственной стоимости бизнеса. Вам вернут 50% от стоимость улучшений. Продажа
+                                бизнеса происходит через меню /business в одной из трёх мэрий.</td>
+                        </tr>
+                        <tr>
+                            <td>Продажа игроку</td>
+                            <td>Если Вы решили продать бизнес другому игроку, Вы можете указать цену продажи в размере
+                                от 75% до 300% от гос. стоимости. Для продажи необходимо открыть меню бизнеса /busines,
+                                выбрать пункт Продать бизнес игроку, ввести ID игрока и цену продажи. После завершения
+                                сделки Вы получите игровую валюту, равную стоимости продажи и 50% от стоимости
+                                улучшений.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Оплата бизнеса</h2>
+                <p>Купленный бизнес необходимо оплачивать. Арендная плата различается в каждом конкретном случае и
+                    составляет 1% от государственной стоимости бизнеса. Заплатить за аренду можно в любом банке,
+                    банкомате и мобильном банке. Максимальный срок оплаты аренды - 30 дней.</p>
+                <p class="note"><strong>Обратите внимание:</strong> Каждый час игра проверяет бизнесы, которые оплачены
+                    на срок меньше одного дня. Такие бизнесы могут быть опечатаны сотрудниками правительства и проданы
+                    государству в течение 2-4 дней. Владелец не может управлять опечатанным бизнесом.</p>
+
+                <h2>Прибыль и закупка продуктов</h2>
+                <p>Чтобы получить прибыль, на складе бизнеса должны быть продукты. Закупку производит владелец с помощью
+                    команды /business (пункт "Приобрести продукты"). Стоимость 1 продукта различается для каждого типа
+                    бизнеса:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Тип бизнеса</th>
+                            <th>Стоимость 1 продукта</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Магазин 24/7</td>
+                            <td>10.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Сотовый салон</td>
+                            <td>7.500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Казино</td>
+                            <td>25.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Автосалон</td>
+                            <td>40.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Магазин одежды</td>
+                            <td>15.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Ночной клуб</td>
+                            <td>9.500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Фитнес центр</td>
+                            <td>20.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Столовая</td>
+                            <td>7.500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Кинотеатр</td>
+                            <td>25.000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Частный банк</td>
+                            <td>7.500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>Центр недвижимости</td>
+                            <td>10.000 рублей</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Каждый час со склада снимается 1 партия продуктов и начисляется прибыль. Изначально склад вмещает 6
+                    партий продуктов (этого хватит на 6 часов получения прибыли). Вместимость склада увеличивается с
+                    помощью улучшений до 72 партий включительно. Склад максимального уровня позволяет "забыть" о закупке
+                    продуктов на 3 дня.</p>
+                <p class="note"><strong>Обратите внимание:</strong> Если склад бизнеса будет пустовать более трёх дней,
+                    сотрудники правительства опечатают бизнес и он будет продан государству в течение 2-4 дней. Владелец
+                    не может управлять опечатанным бизнесом.</p>
+
+                <h2>Прочее</h2>
+                <p>Помимо этого, владелец может просматривать информацию о бизнесе, финансовую статистику и статистику
+                    посещения за последние 30 дней и отметить бизнес на радаре.</p>
+
+                <h2>Улучшения</h2>
+                <p>Для бизнеса доступно четыре вида улучшений. Они позволяют сделать предприятие более привлекательным
+                    для своих клиентов и повысить прибыль. Купленные улучшения сохраняются на весь срок владения
+                    бизнесом и пропадают при продаже бизнеса государству или другому игроку.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="housing-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Жильё</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Имущество</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Жильё в игре представлено в виде частных домов и квартир в подъездах жилых домов. Жильё используется
+                    для проживания (игрок может появляться в нём при входе в игру) и предоставляет парковочные места
+                    (для покупки личного транспорта).</p>
+
+                <h2>Расположение</h2>
+                <p>Жильё равномерно распределено по населённым пунктам.</p>
+                <p>Команда /home > Построить маршрут на навигаторе позволит найти жильё, которым игрок уже владеет.</p>
+
+                <h2>Типы жилья</h2>
+                <p>Всё жильё разделяется на дома и квартиры:</p>
+
+                <h3>Дом</h3>
+                <p>Дома разделяются на классы. Каждый класс дома имеет уникальный интерьер. В игре представлено 4 класса
+                    домов:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Класс</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Избушка</td>
+                            <td>Стоимость домов данного класса начинается от 49999 игровой валюты. В домах данного
+                                класса Вам доступно одно парковочное место. Все улучшения недвижимости можно повысить
+                                максимально до второго уровня.</td>
+                        </tr>
+                        <tr>
+                            <td>Дом среднего класса</td>
+                            <td>Стоимость домов данного класса начинается от 199999 игровой валюты. Максимальное
+                                улучшение недвижимости до 3 уровня. В домах среднего класса доступны два парковочных
+                                места.</td>
+                        </tr>
+                        <tr>
+                            <td>Дом высокого класса</td>
+                            <td>Стоимость домов данного класса начинает от 1849999 игровой валюты. Максимальное
+                                улучшение недвижимости 4 уровня. В домах высокого класса доступны 3 парковочных места.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Дом элитного класса</td>
+                            <td>Стоимость домов данного класса начинает от 2649999 игровой валюты. Максимальное
+                                улучшение недвижимости 4 уровня. В домах элитного класса доступны 4 парковочных места.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Квартира</h3>
+                <p>Квартиры так же разделены на классы. Каждый класс квартиры имеет свой интерьер. В отличие от домов, в
+                    игре представлено 2 класса квартир:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Класс</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Хрущевка</td>
+                            <td>Стоимость квартир данного класса начинаются от 149999 игровой валюты. В каждой хрущевке
+                                доступно одно парковочное место, а также возможность улучшения недвижимости до 2 уровня.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Сталинка</td>
+                            <td>Стоимость квартир данного класса начинаются от 449999 игровой валюты. При покупке
+                                сталинки будут доступны 2 парковочных места и возможность улучшения до 3 уровня. Найти
+                                такие квартиры возможно в г. Южный.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Управление</h2>
+                <p>Любой игрок может приобрести жильё со второго уровня, имея на руках необходимое количество игровой
+                    валюты.</p>
+
+                <h3>Покупка дома</h3>
+                <p>Способы приобретения одинаковы для обоих типов жилья:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Покупка у государства</td>
+                            <td>Жильё продаётся по государственной стоимости. Цена каждого дома или квартиры различается
+                                и зависит от расположения и класса. Если вы видите жёлтый значок у дома или подъезда, то
+                                дом или одна из квартир в подъезде опечатаны и скоро станут доступны для покупки у
+                                государства. Если во время нового часа значок стал зелёным, то доступна покупка по
+                                государственной стоимости.</td>
+                        </tr>
+                        <tr>
+                            <td>Покупка у игрока</td>
+                            <td>Часто игроки продают жильё на вторичном рынке. В этом случае цену назначает владелец.
+                                Если вы согласны на сделку, просто согласитесь на входящее предложение.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>После покупки жилья вы можете управлять им с помощью команды /home.</p>
+
+                <h3>Продажа жилья</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Продажа государству</td>
+                            <td>Вы можете продать жильё государству. В этом случае с вас взыщут налог в размере 35% от
+                                государственной стоимости жилья и вернут 50% от стоимости улучшений. Продажа жилья
+                                происходит через меню /home в одной из трёх мэрий.</td>
+                        </tr>
+                        <tr>
+                            <td>Продажа игроку</td>
+                            <td>Если вы решили продать жильё другому игроку, вы можете указать цену продажи в размере от
+                                75% до 200% от гос. стоимости. Для продажи необходимо открыть меню жилья /home, выбрать
+                                пункт "Продать жильё игроку", ввести ID игрока и цену продажи. После завершения сделки
+                                вы получите игровую валюту, равную стоимости продажи и 50% от стоимости улучшений.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Вы не сможете продать жильё, если:</p>
+                <ul>
+                    <li>У покупателя уже есть жильё.</li>
+                    <li>Цена продажи ниже 75% или выше 200% от государственной стоимости.</li>
+                    <li>Уровень персонажа покупателя ниже 2.</li>
+                    <li>Вы продаёте жильё третий раз за день.</li>
+                    <li>Вы находитесь далеко от продаваемой недвижимости.</li>
+                </ul>
+
+                <h2>Оплата жилья</h2>
+                <p>Купленное жильё необходимо оплачивать. Квартплата различается в каждом конкретном случае и составляет
+                    1% от государственной стоимости жилья. Заплатить за аренду можно в любом банке, банкомате и
+                    мобильном банке. Максимальный срок оплаты аренды - 30 дней.</p>
+                <p class="note"><strong>Обратите внимание:</strong> Каждый час игра проверяет дома и квартиры, которые
+                    оплачены на срок меньше одного дня. Такое жильё может быть опечатано и проданы государству в течение
+                    2-4 дней. Владелец не может управлять опечатанным жильём.</p>
+
+                <h2>Прочее</h2>
+                <p>Владелец может просматривать информацию о жилье, отметить его на радаре и доставить к нему личный
+                    транспорт (/home).</p>
+
+                <h2>Улучшения</h2>
+                <p>Для домов и квартир доступно семь видов улучшений. Они позволяют повысить удобство пользования
+                    жильём. Купленные улучшения сохраняются на весь срок владения жильём и пропадают при продаже
+                    государству или другому игроку. Улучшить жилищные условия можно в центре улучшения недвижимости
+                    (/gps > Бизнесы > Центр улучшения недвижимости).</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="personal-transport-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Личный транспорт</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Имущество</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Транспорт, который может быть приобретен игроком, представлен велосипедами и мотоциклами, легковыми
+                    автомобилями, фургонами и грузовиками. Игрок не может приобрести в собственность летательные
+                    аппараты.</p>
+
+                <h2>Классы автомобилей</h2>
+                <p>Доступные для покупки транспортные средства делятся на классы, которые определяют стоимость
+                    обслуживания, модификаций и ремонта. Более подробная информация по классам доступна игроку при
+                    посещении автосалонов.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Наименование</th>
+                            <th>Особенности класса</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Вело/Мото</td>
+                            <td>В эту группу попадают все мотоциклы и велосипеды.</td>
+                        </tr>
+                        <tr>
+                            <td>Низкий класс</td>
+                            <td>Большинство автомобилей отечественного производства и иномарки в низком ценовом
+                                сегменте.</td>
+                        </tr>
+                        <tr>
+                            <td>Средний класс</td>
+                            <td>Иностранные автомобили стоимостью до полутора миллионов.</td>
+                        </tr>
+                        <tr>
+                            <td>Высокий класс</td>
+                            <td>Большинство автомобилей иностранного производства, стоимостью от полутора миллионов.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Способы приобретения</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ приобретения</th>
+                            <th>Информация о способе приобретения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Покупка транспорта в автосалоне</td>
+                            <td>Необходимым условием для приобретения транспорта в данном случае является наличие
+                                квартиры или дома со свободными парковочными местами. Покупка осуществляется за игровую
+                                валюту в одном из автосалонов. Транспорт, приобретенный данным способом занимает одно
+                                парковочное место дома или квартиры.</td>
+                        </tr>
+                        <tr>
+                            <td>Аренда транспорта в автосалоне</td>
+                            <td>Аренда доступна в отечественном автосалоне для игроков с 1 по 3 Уровень персонажа.
+                                Минимальный срок аренды транспорта - 1 день, максимальный - 3 день. Одновременно может
+                                быть арендован один автомобиль. Транспорт, приобретенный данным способом не занимает
+                                парковочные места дома или квартиры.</td>
+                        </tr>
+                        <tr>
+                            <td>Покупка игрового пакета или случайного автомобиля в магазине на сайте</td>
+                            <td>Транспорт, купленный на сайте является премиальным, для владения им нет необходимости в
+                                покупке дома или квартиры. Не занимает парковочных мест, максимальное количество
+                                премиальных автомобилей во владении - 25.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Обслуживание транспорта</h2>
+                <h3>Ремонт автомобиля</h3>
+                <p>В случае повреждения транспортного средства во время аварии, уменьшается его общая целостность,
+                    которая при максимальном своём значении равна 100%. Существует два способа восстановить целостность
+                    своего транспорта:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ починки автомобиля</th>
+                            <th>Информация о способе починки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Автомеханики</td>
+                            <td>Могут встретиться в различных частях карты, в основном располагаются на ключевых
+                                перекрестках, есть возможность вызвать по телефону в случае экстренной ситуации.
+                                Стоимость починки зависит от общего пробега Вашего автомобиля и количества его
+                                повреждений.</td>
+                        </tr>
+                        <tr>
+                            <td>Ремонтный набор</td>
+                            <td>Продается в магазинах 24/7 равномерно расположенных по всей карте. С собой можно носить
+                                до двух ремонтных наборов каждого класса. Стоимость зависит от класса Вашего транспорта.
+                                Применение ремонтного набора осуществляется через меню быстрых действий в режиме
+                                взаимодействия (Клавиша Tab > Починить ремонтным набором).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Заправка автомобиля</h3>
+                <p>Во время своей работы транспорт расходует один из типов топлива. Тип топлива автомобиля указывается в
+                    автосалоне при покупке или в техническом паспорте транспорта.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ заправки автомобиля</th>
+                            <th>Информация о способе заправки</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>АЗС</td>
+                            <td>Заправка осуществляется после попадания автомобиля на маркер с заглушенным двигателем.
+                                Тип топлива подходящий для Вашего транспорта определяется автоматически, Вам остается
+                                выбрать количество топлива и оплатить покупку.</td>
+                        </tr>
+                        <tr>
+                            <td>Канистра</td>
+                            <td>Доступна для покупки на АЗС. Тип необходимого топлива выбирается вручную, вмещает в себя
+                                15 л. топлива. Заправка транспорта осуществляется вызовом меню быстрых действий в режиме
+                                взаимодействия (Клавиша Tab > Заправить из канистры).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Переворот автомобиля</h3>
+                <p>В ситуации, когда Ваш автомобиль оказался перевернут, есть два способа вернуть его в исходное
+                    положение:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Способ переворота автомобиля</th>
+                            <th>Информация о способе переворота</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Автомеханики</td>
+                            <td>Осуществляют переворот Вашего транспорта за небольшую плату.</td>
+                        </tr>
+                        <tr>
+                            <td>Домкрат</td>
+                            <td>Продается в магазинах 24/7 равномерно расположенных по всей карте. С собой можно носить
+                                один домкрат. Переворот транспорта осуществляется через меню быстрых действий в режиме
+                                взаимодействия (Клавиша Tab > Перевернуть домкратом).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Визуальные модификации</h3>
+                <p>Для изменения цвета кузова, дисков или салона транспортного средства необходимо посетить
+                    Тюнинг-ателье.</p>
+
+                <h2>Интерфейс взаимодействия</h2>
+                <p>Персонажи взаимодействуют с транспортом как водители или как пассажиры. Чтобы водить автомобиль, не
+                    обязательно им владеть. Владелец получает доступ к управлению своими транспортными средствами (далее
+                    ТС) через меню быстрых действий (Клавиша Tab > Загрузка личного транспорта).</p>
+
+                <p>Вызывается Список личного транспорта персонажа, в котором в виде таблицы представлены все
+                    приобретенные ТС:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Номер</th>
+                            <th>Тип</th>
+                            <th>Доступ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Наименование транспортного средства</td>
+                            <td>Автомобильный номер формата A000AA52 на автомобилях и формата 0000А52 на мотоциклах,
+                                либо прочерк, в случае отсутствия номера</td>
+                            <td>Пермиум или Обычный</td>
+                            <td>Да или Нет. Доступ к непремиальным транспортным средствам может быть ограничен, если
+                                количество машиномест меньше количества транспортных средств.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Нажав на нужное ТС, появится диалог:</p>
+                <ul>
+                    <li>Отметить транспорт на радаре (Отображается в случае, когда личный транспорт находится далеко от
+                        игрока)</li>
+                    <li>Загрузить транспорт (Отображается, если личный транспорт припаркован рядом с игроком)</li>
+                </ul>
+
+                <h3>Управление личным транспортом</h3>
+                <p>Если транспорт загружен, то управление осуществляется через меню быстрых действий (Клавиша Tab >
+                    Управлять личным транспортом).</p>
+
+                <h4>Документы на ТС</h4>
+                <p>Показывает всю доступную информацию по загруженному транспорту. Чтобы продемонстрировать эту
+                    информацию другому игроку, используется меню быстрых действий в режиме взаимодействия (Клавиша Tab >
+                    Передать документы на ТС).</p>
+
+                <p>Информация представляется в виде документа, имеющего уникальный номер, указанный в заголовке. В
+                    таблице представлены пункты этого документа:</p>
+
+                <h5>Основное</h5>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Пункт</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Название</td>
+                            <td>Наименование ТС</td>
+                        </tr>
+                        <tr>
+                            <td>Владелец</td>
+                            <td>Имя персонажа</td>
+                        </tr>
+                        <tr>
+                            <td>Номер</td>
+                            <td>Регистрационный знак ТС</td>
+                        </tr>
+                        <tr>
+                            <td>Цвет кузова</td>
+                            <td>Указан при помощи круга соответствующего цвета</td>
+                        </tr>
+                        <tr>
+                            <td>Цвет салона</td>
+                            <td>Указан при помощи круга соответствующего цвета</td>
+                        </tr>
+                        <tr>
+                            <td>Цвет дисков</td>
+                            <td>Указан при помощи круга соответствующего цвета</td>
+                        </tr>
+                        <tr>
+                            <td>Тип</td>
+                            <td>Премиум или Обычный</td>
+                        </tr>
+                        <tr>
+                            <td>Класс</td>
+                            <td>Низкий, средний или высокий</td>
+                        </tr>
+                        <tr>
+                            <td>Тип КПП</td>
+                            <td>АКПП или МКПП</td>
+                        </tr>
+                        <tr>
+                            <td>Тип топлива</td>
+                            <td>АИ-92, АИ-95, АИ-98, ДТ, ДТ+, Газ</td>
+                        </tr>
+                        <tr>
+                            <td>Расход топлива</td>
+                            <td>Указывается в литрах в час</td>
+                        </tr>
+                        <tr>
+                            <td>Вместимость бака</td>
+                            <td>Указывается в литрах</td>
+                        </tr>
+                        <tr>
+                            <td>Пробег</td>
+                            <td>Указывается в километрах</td>
+                        </tr>
+                        <tr>
+                            <td>Государственная стоимость</td>
+                            <td>Стоимость в автосалоне</td>
+                        </tr>
+                        <tr>
+                            <td>Стоимость всего тюнинга</td>
+                            <td>Общая стоимость улучшений</td>
+                        </tr>
+                        <tr>
+                            <td>Максимальная скорость</td>
+                            <td>Указывается в километрах в час</td>
+                        </tr>
+                        <tr>
+                            <td>Разгон до 100 км/ч</td>
+                            <td>Время в секундах</td>
+                        </tr>
+                        <tr>
+                            <td>Разгон до максимальной скорости</td>
+                            <td>Время в секундах</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5>Улучшения</h5>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Улучшение</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Покраска</td>
+                            <td>Паттерн покраски</td>
+                        </tr>
+                        <tr>
+                            <td>Тонировка</td>
+                            <td>Степень тонировки стёкол</td>
+                        </tr>
+                        <tr>
+                            <td>Улучшение двигателя</td>
+                            <td>Уровень улучшения</td>
+                        </tr>
+                        <tr>
+                            <td>Улучшение тормозов</td>
+                            <td>Уровень улучшения</td>
+                        </tr>
+                        <tr>
+                            <td>Улучшение кузова</td>
+                            <td>Дополнительная прочность</td>
+                        </tr>
+                        <tr>
+                            <td>Улучшение бензобака</td>
+                            <td>Дополнительная вместимость</td>
+                        </tr>
+                        <tr>
+                            <td>Занижение подвески</td>
+                            <td>Степень занижения</td>
+                        </tr>
+                        <tr>
+                            <td>Газовая установка</td>
+                            <td>Да или нет</td>
+                        </tr>
+                        <tr>
+                            <td>Колёса</td>
+                            <td>Наименование модификации</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h5>Состояние</h5>
+                <ul>
+                    <li>Сведения о техническом осмотре</li>
+                </ul>
+
+                <h4>Другие функции управления</h4>
+                <ul>
+                    <li>Открыть/Закрыть транспорт — Опция доступна по нажатию клавиши L или через меню быстрых действий
+                        в режиме взаимодействия: Клавиша Tab > Открыть/закрыть транспорт.</li>
+                    <li>Вставить/Вытащить ключи — Опция доступна по нажатию клавиши K или через меню быстрых действий:
+                        Клавиша Tab > Взаимодействовать с транспортом > Вставить/вытащить ключ.</li>
+                    <li>Управление капотом/Багажником — Осуществляется через меню быстрых действий в режиме
+                        взаимодействия (Клавиша Tab > Открыть/закрыть капот/багажник).</li>
+                    <li>Построить маршрут на навигаторе — Отмечает загруженное ТС на мини-карте и строит до него
+                        маршрут.</li>
+                    <li>Отбуксировать транспорт — Позволяет отбуксировать транспорт к дому или квартире, ближайшему
+                        автосалону или тюнинг-ателье.</li>
+                    <li>Припарковать транспорт — Парковать транспорт возможно только с выключенным двигателем и вне
+                        зеленой зоны. Опция доступна через меню быстрых действий (Клавиша Tab > Взаимодействовать с
+                        транспортом > Припарковать транспорт) только внутри транспортного средства. При следующей
+                        загрузке транспорт появится там, где был запаркован.</li>
+                    <li>Продать транспорт — Для продажи транспорта государству необходимо находиться в одной из мэрий
+                        (/gps > Важные места > Мэрия). Для продажи транспорта другому игроку, нужно вместе с покупателем
+                        явиться на авторынок.</li>
+                    <li>Выгрузить транспорт — Выгружает транспорт и делает его недоступным до следующей загрузки.
+                        Выгрузить транспорт невозможно, если за рулем находится персонаж.</li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <template id="weapons-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Оружие</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Имущество</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Оружие отличается друг от друга рядом характеристик: емкостью магазина, кучностью огня, уроном и
+                    возможностью одним выстрелом поразить сразу несколько целей.</p>
+                <p>Игроки могут улучшить навыки своих персонажей владения некоторыми видами оружия, чтобы более
+                    эффективно его использовать.</p>
+
+                <h2>Виды оружия</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Дистанция</th>
+                            <th>Особенность</th>
+                            <th>Патронов в магазине</th>
+                            <th>Улучшение с навыком 100%</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Бейсбольная бита</td>
+                            <td>Ближний бой</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Лопата</td>
+                            <td>Ближний бой</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Дубинка</td>
+                            <td>Ближний бой</td>
+                            <td>Обезвреживает персонажа на 15 секунд при применении сотрудником МО МВД</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Газовый баллончик</td>
+                            <td>Ближний бой</td>
+                            <td>Наносит небольшой урон и временно обездвиживает персонажа</td>
+                            <td>250-500</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>ТТ</td>
+                            <td>Средняя</td>
+                            <td>Стрельба на бегу</td>
+                            <td>17</td>
+                            <td>Повышается урон</td>
+                        </tr>
+                        <tr>
+                            <td>Desert Eagle</td>
+                            <td>Средняя</td>
+                            <td>-</td>
+                            <td>7</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>Дробовик</td>
+                            <td>Ближняя</td>
+                            <td>Увеличенный разброс</td>
+                            <td>Без перезарядки</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>Обрез</td>
+                            <td>Ближняя</td>
+                            <td>Увеличенный разброс, стрельба на бегу</td>
+                            <td>2</td>
+                            <td>Повышается урон</td>
+                        </tr>
+                        <tr>
+                            <td>Авт. Дробовик</td>
+                            <td>Ближняя</td>
+                            <td>Увеличенный разброс, стрельба в автоматическом режиме</td>
+                            <td>7</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>MP-40</td>
+                            <td>Средняя</td>
+                            <td>Стрельба на бегу</td>
+                            <td>50</td>
+                            <td>Повышается урон</td>
+                        </tr>
+                        <tr>
+                            <td>АКС-74У</td>
+                            <td>Средняя</td>
+                            <td>-</td>
+                            <td>30</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>АК-74</td>
+                            <td>Дальняя</td>
+                            <td>-</td>
+                            <td>30</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>АК-105</td>
+                            <td>Дальняя</td>
+                            <td>-</td>
+                            <td>50</td>
+                            <td>Повышается урон, появляется возможность стрелять на ходу</td>
+                        </tr>
+                        <tr>
+                            <td>Tec-9</td>
+                            <td>Средняя</td>
+                            <td>Стрельба на бегу</td>
+                            <td>50</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Country Rifle</td>
+                            <td>Дальняя +</td>
+                            <td>-</td>
+                            <td>Без перезарядки</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Снайперская винтовка</td>
+                            <td>Дальняя + +</td>
+                            <td>Стрельба возможна только через оптический прицел, есть зум</td>
+                            <td>Без перезарядки</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Навыки на оружие</h2>
+                <p>Стрельба из некоторых видов оружия может быть улучшена через прокачку навыков. Прогресс навыка
+                    движется от 0% до 100%, при этом эффект от улучшения становится доступен только при полной прокачке.
+                </p>
+
+                <h3>Прокачка навыков</h3>
+                <p>Прокачка навыка на оружие осуществляется в любом Тире (/gps > Важные места > Тир). При покупке
+                    абонемента, игроку необходимо выбрать оружие, навык на владение которым он хочет повысить (также
+                    необходимо принести с собой это оружие и патроны, если его не будет, то абонемент купить
+                    невозможно).</p>
+
+                <p>Чтобы прокачать навык, игрок должен осуществить неприцельный одиночный выстрел из оружия (клавиша
+                    Ctrl или ЛКМ) и попасть по мишени на своём огневом рубеже. Дождавшись конца анимации, необходимо
+                    повторить действие. Количество выстрелов для прокачки 1% зависит от вида оружия, и начинается от 20
+                    раз. Тренировку можно закончить досрочно, не дожидаясь окончания действия абонемента (клавиша Левый
+                    Shift).</p>
+
+                <h3>Просмотр навыков</h3>
+                <p>Для просмотра навыков используется меню быстрых действий (Клавиша Tab > Посмотреть удостоверения или
+                    навыки > Навыки владения оружием). Чтобы продемонстрировать навыки другому персонажу также
+                    используется меню быстрых действий в режиме взаимодействия (Клавиша Tab > Показать удостоверение или
+                    навыки > Навыки владения оружием).</p>
+
+                <h2>Доступность</h2>
+                <p>Большинство видов оружия можно создать, находясь в одной из нелегальных организаций. Для этого
+                    используется меню быстрых действий (Клавиша Tab > Собрать оружие), расходуются патроны и металл.</p>
+
+                <p>Персонажи, работающие в государственных организациях, получают оружие на складе организации.</p>
+
+                <p>Игроки, которые не состоят в организации и имеют 4+ уровень персонажа, могут приобрести оружие у
+                    Гопников, Скинхедов и Кавказцев (/gps > Нелегальные организации).</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Название оружия</th>
+                            <th>Создать / Продать игрокам</th>
+                            <th>На складе государственных организаций</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Бейсбольная бита</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Лопата</td>
+                            <td>Нет</td>
+                            <td>ВЧ</td>
+                        </tr>
+                        <tr>
+                            <td>Дубинка</td>
+                            <td>Нет</td>
+                            <td>МО МВД</td>
+                        </tr>
+                        <tr>
+                            <td>Газовый баллончик</td>
+                            <td>Нелегальные организации могут купить в 24/7. Продажа невозможна</td>
+                            <td>МО МВД, Правительство, БЦРБ</td>
+                        </tr>
+                        <tr>
+                            <td>ТТ</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Desert Eagle</td>
+                            <td>Нелегальные организации</td>
+                            <td>МО МВД, Правительство, ВЧ</td>
+                        </tr>
+                        <tr>
+                            <td>Дробовик</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Обрез</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Авт. Дробовик</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>MP-40</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>АКС-74У</td>
+                            <td>Нелегальные организации</td>
+                            <td>МО МВД, Правительство, ВЧ</td>
+                        </tr>
+                        <tr>
+                            <td>АК-74</td>
+                            <td>Нелегальные организации</td>
+                            <td>МО МВД, Правительство, ВЧ</td>
+                        </tr>
+                        <tr>
+                            <td>АК-105</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Tec-9</td>
+                            <td>Нелегальные организации</td>
+                            <td>Нет</td>
+                        </tr>
+                        <tr>
+                            <td>Country Rifle</td>
+                            <td>Нелегальные организации</td>
+                            <td>ВЧ</td>
+                        </tr>
+                        <tr>
+                            <td>Снайперская винтовка</td>
+                            <td>Нет</td>
+                            <td>МО МВД, Правительство</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Хранение</h2>
+                <p>Персонаж теряет все оружие, находящееся в руках, при смерти и при увольнении из любой организации.
+                    Также персонажи, работающие в государственных организациях, теряют все оружие, когда завершают
+                    смену.</p>
+
+                <p>Персонажи, работающие в МО МВД могут проводить обыск и изымать оружие у любых других персонажей.</p>
+
+                <p>Если у персонажа есть в собственности жилье, то он может сохранить несколько наборов оружия при
+                    помощи сейфа для оружия.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="phone-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Телефон</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Имущество</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Телефон — средство связи, при помощи которого игроки могут поддерживать коммуникацию на расстоянии.
+                </p>
+
+                <h2>Модели</h2>
+                <p>К покупке в сотовом салоне доступны три модели телефонов, отличающиеся друг от друга функциями и
+                    ценой.</p>
+
+                <h3>Mokia 2110</h3>
+                <p>Эта модель является самой малофункциональный среди всех доступных. С помощью неё можно совершать
+                    звонки и отправлять СМС. Цена модели в сотовом салоне составляет 1000 игровой валюты.</p>
+
+                <h3>Malsung Malaxy M10</h3>
+                <p>Данная модель телефона, помимо функции связи, также дает возможность устроиться на работу Таксиста.
+                    Без телефона этой модели или выше данный тип работы будет недоступен. Также в данной модели более
+                    расширенный набор рингтонов. Цена модели в сотовом салоне составляет 5000 игровой валюты.</p>
+
+                <h3>mPhone XX</h3>
+                <p>Данная модель является лучшей и самой многофункциональной из всех. Помимо функций, которые есть в
+                    других моделях, здесь также доступен мобильный банк, с помощью которого возможно оплачивать
+                    коммунальные услуги, штрафы, бизнес и т.д. Цена модели в сотовом салоне составляет 15000 игровой
+                    валюты.</p>
+
+                <h2>Функции</h2>
+                <p>Здесь перечислены все функции, которыми могут воспользоваться игроки. Обратите внимание, что набор
+                    функций зависит от модели телефона.</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Функция</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Информация</td>
+                            <td>Просмотр текущего номера телефона и его баланса.</td>
+                        </tr>
+                        <tr>
+                            <td>Звонок</td>
+                            <td>Позвонить другому игроку. Для звонка необходимо ввести номер телефона персонажа. Цена
+                                одной минуты разговора 100 игровой валюты. Подписка Малиновка плюс дает скидку на данную
+                                услугу в размере 50%.</td>
+                        </tr>
+                        <tr>
+                            <td>СМС</td>
+                            <td>Отправить сообщение другому игроку. Для этого необходимо ввести номер телефона персонажа
+                                и сообщение через запятую. Цена одного сообщения 50 игровой валюты. Подписка Малиновка
+                                плюс дает скидку на данную услугу в размере 50%.</td>
+                        </tr>
+                        <tr>
+                            <td>Мобильный банк</td>
+                            <td>Позволяет делать денежные переводы, оплачивать имущество и штрафы без похода в банк.
+                                (Данная функция доступна только обладателям модели mPhone XX)</td>
+                        </tr>
+                        <tr>
+                            <td>Телефонная книга</td>
+                            <td>Встроенная телефонная книга на 20 контактов. Чтобы добавить контакт, необходимо выбрать
+                                функцию нового контакта, затем через запятую ввести имя нового абонента и его номер
+                                телефона. Записи в телефонной книге можно в любой момент изменить или удалить.</td>
+                        </tr>
+                        <tr>
+                            <td>Работа таксиста</td>
+                            <td>Позволяет начать рабочий день Таксиста при наличие у вас лицензии и трудоустройства.
+                                (Данная функция доступна только обладателям моделей mPhone XX и Malsung Malaxy M10)</td>
+                        </tr>
+                        <tr>
+                            <td>Изменить мелодию звонка</td>
+                            <td>Выбрать мелодию звонка.</td>
+                        </tr>
+                        <tr>
+                            <td>Услуги</td>
+                            <td>Узнать список активных услуг и срок их действия.</td>
+                        </tr>
+                        <tr>
+                            <td>Выключить телефон</td>
+                            <td>Выключение телефона. Выключенный телефон не принимает входящие звонки и СМС.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
+    <template id="character-level-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Уровень персонажа</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые показатели</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Повышение уровня персонажа позволяет вступать в различные организации, устраиваться на более
+                    оплачиваемые работы, покупать оружие и т.д.</p>
+                <p>Для того, чтобы посмотреть уровень вашего персонажа, необходимо открыть меню быстрых действий
+                    нажатием клавиши Tab, далее выбрать пункт Посмотреть документы, где уровень отображается в паспорте
+                    персонажа под никнеймом.</p>
+
+                <h2>Повышение уровня</h2>
+                <p>Для получения очков опыта необходимо присутствовать в игре более 20 минут в начале нового часа, во
+                    время которого вам будет начислено одно очко опыта или два (при наличии подписки Малиновка+ или
+                    активированного бустера).</p>
+
+                <p class="note"><strong>Примечание:</strong></p>
+                <ul>
+                    <li>Для получения опыта вам необходимо отыграть как минимум 20 минут за час. Время, когда вы
+                        находитесь в AFK или спите также учитывается.</li>
+                    <li>Вы не получите очко опыта, если во время наступления нового часа будете стоять в AFK.</li>
+                    <li>Уровень персонажа неограничен.</li>
+                </ul>
+
+                <h2>Игровой уровень</h2>
+
+                <h3>1 уровень</h3>
+                <ul>
+                    <li>Доступные временные работы: Шахта, лесопилка, ферма, технолог</li>
+                    <li>Спавн бездомных: автовокзалы пгт. Батырево</li>
+                    <li>Стоимость услуг адвоката: 1000 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 500 рублей</li>
+                </ul>
+
+                <h3>2 уровень</h3>
+                <ul>
+                    <li>Доступные основные работы: Водитель автобуса, Таксист</li>
+                    <li>Доступные организации: Войсковая часть</li>
+                    <li>Стоимость услуг адвоката: 1000 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 500 рублей</li>
+                </ul>
+
+                <h3>3 уровень</h3>
+                <ul>
+                    <li>Доступные организации: БЦРБ, Скинхеды, Гопота, Кавказцы</li>
+                    <li>Доступные новые основные работы: Автомеханик</li>
+                    <li>Доступные временные работы: Автоугонщик</li>
+                    <li>Стоимость услуг адвоката: 2500 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 750 рублей</li>
+                    <li>Пропадает возможность аренды авто в автосалонах.</li>
+                </ul>
+
+                <h3>4 уровень</h3>
+                <ul>
+                    <li>Доступные новые основные работы: Развозчик</li>
+                    <li>Доступные новые организации: Правительство</li>
+                    <li>Спавн бездомных: автовокзал пгт. Бусаево</li>
+                    <li>Стоимость услуг адвоката: 2500 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 1000 рублей</li>
+                    <li>Появляется доступ к покупке оружия.</li>
+                </ul>
+
+                <h3>5 уровень</h3>
+                <ul>
+                    <li>Доступные новые организации: Полиция</li>
+                    <li>Стоимость услуг адвоката: 2500 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 1250 рублей</li>
+                </ul>
+
+                <h3>6 уровень</h3>
+                <ul>
+                    <li>Доступные новые основные работы: Пилот</li>
+                    <li>Стоимость услуг адвоката: 5000 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 1500 рублей</li>
+                </ul>
+
+                <h3>7 уровень</h3>
+                <ul>
+                    <li>Доступные новые основные работы: Дальнобойщик</li>
+                    <li>Спавн бездомных: Железнодорожный вокзал г. Южный</li>
+                    <li>Стоимость услуг адвоката: 5000 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 1750 рублей</li>
+                </ul>
+
+                <h3>10 уровень</h3>
+                <ul>
+                    <li>Стоимость услуг адвоката: 7500 рублей</li>
+                    <li>Стоимость экзамена в автошколе: 2500 рублей</li>
+                </ul>
+
+                <h2>Услуги адвоката</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Уровень персонажа</th>
+                            <th>Цена</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1 - 2 уровень</td>
+                            <td>1000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>3 - 5 уровень</td>
+                            <td>2500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>6 - 9 уровень</td>
+                            <td>5000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>10 - 12 уровень</td>
+                            <td>7500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>13 - 15 уровень</td>
+                            <td>10000 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>16 - 19 уровень</td>
+                            <td>12500 рублей</td>
+                        </tr>
+                        <tr>
+                            <td>19 и выше уровень</td>
+                            <td>15000 рублей</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Экзамен в автошколе</h2>
+                <p>Базовая стоимость экзамена составляет 500 рублей. Начиная с 3 уровня цена увеличивается на 250 рублей
+                    за каждый уровень персонажа.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="documents-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Документы</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые показатели</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Документы включают в себя паспорт, лицензии, военный билет и трудовую книгу персонажа.</p>
+                <p>Получить доступ к документам персонажа можно с помощью меню быстрых действий (Клавиша Tab >
+                    Посмотреть документы).</p>
+
+                <h2>Паспорт</h2>
+                <p>Паспорт содержит основную информацию о персонаже:</p>
+                <ul>
+                    <li>&lt;Имя_Фамилия&gt; &lt;Уровень персонажа&gt; &lt;Пол&gt;</li>
+                    <li>Законопослушность (Текущий уровень законопослушности персонажа)</li>
+                    <li>Военный билет (Отметка о наличии/отсутствии военного билета)</li>
+                    <li>Уровень розыска (Текущий уровень розыска персонажа)</li>
+                    <li>Место жительства (Номер квартиры, при наличии)</li>
+                    <li>Бизнес во владении</li>
+                    <li>Организация (Текущее место работы)</li>
+                    <li>Должность (Должность в организации)</li>
+                </ul>
+
+                <h2>Лицензии</h2>
+                <ul>
+                    <li><strong>Медицинская справка</strong> (Содержит информацию о физическом состоянии персонажа и
+                        зависимости. Мед. справку можно оформить в БЦРБ (/gps > Государственные организации > БЦРБ))
+                    </li>
+                    <li><strong>Водительские права</strong> (Необходимы для владения и управления личным транспортом.
+                        Можно получить в автошколе (/gps > Важные места > Автошкола))</li>
+                    <li><strong>Удостоверение пилота</strong> (Необходимо для управления летательными аппаратами. Можно
+                        получить в Мерии (/gps > Важные места > Мерия))</li>
+                    <li><strong>Лицензия мореплавателя</strong> (Необходима для управления водным транспортом. Можно
+                        получить в Мерии (/gps > Важные места > Мерия))</li>
+                    <li><strong>Лицензия таксиста</strong> (Необходима для трудоустройства таксистом. Можно получить в
+                        Мерии (/gps > Важные места > Мерия))</li>
+                    <li><strong>Разрешение на ведение бизнеса</strong> (Необходимо для покупки и владения бизнесом.
+                        Можно получить в Мерии (/gps > Важные места > Мерия))</li>
+                    <li><strong>Разрешение на владение АЗС</strong> (Необходимо для покупки и владения АЗС. Можно
+                        получить в Мерии (/gps > Важные места > Мерия))</li>
+                </ul>
+
+                <h2>Трудовая книга</h2>
+                <p>Трудовая книга содержит информацию о предыдущих местах работы персонажа в организациях. Записи в
+                    трудовой книге включают в себя название организации, должность, время трудоустройства и увольнения,
+                    причину увольнения.</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="skills-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Навыки</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые показатели</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Навыки — параметры персонажа, которые можно улучшить.</p>
+
+                <h2>Физические навыки</h2>
+                <p>Физические параметры персонажа. Включают:</p>
+                <ul>
+                    <li>Скорость бега</li>
+                    <li>Выносливость</li>
+                    <li>Силу</li>
+                    <li>Стиль боя</li>
+                    <li>Объем лёгких</li>
+                    <li>Максимальное количество ОЗ (Очков здоровья)</li>
+                </ul>
+                <p>Эти навыки можно улучшить, посещая фитнес-центр (/gps > Бизнесы > Фитнес-центр).</p>
+
+                <h2>Навыки владения оружием</h2>
+                <p>Эти навыки отражают мастерство владения оружием персонажа. Существуют навыки на следующее вооружение:
+                </p>
+                <ul>
+                    <li>ТТ</li>
+                    <li>ТТ с глушителем</li>
+                    <li>Desert Eagle</li>
+                    <li>Обрез</li>
+                    <li>Автоматический дробовик</li>
+                    <li>MP-40</li>
+                    <li>АКС-74У</li>
+                    <li>АК-47</li>
+                    <li>АК-104</li>
+                </ul>
+                <p>Эти навыки можно улучшить, посещая тир (/gps > Важные места > Тир).</p>
+                <p>Навыки на оружие доступны для покупки за малину в разделе Дополнительные услуги (/donate).</p>
+            </div>
+        </div>
+    </template>
+
+    <template id="hunger-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Голод</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые показатели</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Голод является следствием потребности персонажа в еде. В зависимости от степени голодания персонаж
+                    начинает терять очки здоровья.</p>
+
+                <p>Чтобы поддерживать уровень сытости, игроку необходимо периодически употреблять пищу. Найти еду можно
+                    в некоторых местах:</p>
+                <ul>
+                    <li><strong>Социальные столовые</strong> — Для всех игроков 1 уровня на некоторых временных работах
+                        и автовокзалах доступна бесплатная еда для бездомных</li>
+                    <li><strong>Столовые</strong> — В столовой есть разнообразное меню. Еда из столовой употребляется в
+                        заведении</li>
+                    <li><strong>Магазин 24/7</strong> — Среди товаров круглосуточного магазина можно купить еду с собой.
+                        Количество носимой еды ограничено.</li>
+                    <li><strong>Мини-маркет на АЗС</strong> — В мини-маркете АЗС можно купить легкий перекус. Еда
+                        употребляется на месте.</li>
+                    <li><strong>Заказ еды на дом</strong> — При наличии дома холодильника можно заказывать наборы еды на
+                        дом. Набор еды можно съесть дома или взять с собой.</li>
+                </ul>
+
+                <h2>Степень голодания</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Степень голодания</th>
+                            <th>Очки сытости</th>
+                            <th>Расход ОЗ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Не голоден</td>
+                            <td>70 — 100</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>Легкий голод</td>
+                            <td>40 — 69</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>Голод</td>
+                            <td>20 — 39</td>
+                            <td>-1 ОЗ/мин</td>
+                        </tr>
+                        <tr>
+                            <td>Сильный голод</td>
+                            <td>0 — 19</td>
+                            <td>-2 ОЗ/мин</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Информация о сытости</h2>
+                <p>Информация о голоде отображается в интерфейсе «Ваша еда», который открывается через меню быстрых
+                    действий (Клавиша Tab > Съесть еду).</p>
+            </div>
+        </div>
+    </template>
+
+    <!-- Остальные шаблоны для статей -->
+    <template id="wanted-template">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">Розыск</h1>
+                <div class="article-meta">
+                    <span><i class="bi bi-clock"></i> Обновлено: 15.10.2023</span>
+                    <span><i class="bi bi-tag"></i> Игровые показатели</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>Уровень розыска — показатель, отражающий уровень преступной активности персонажа и его розыскной
+                    статус.</p>
+
+                <h2>Получение розыска</h2>
+                <p>Розыск начисляется за различные нарушения правил и закона в игре:</p>
+                <ul>
+                    <li>Нарушение ПДД</li>
+                    <li>Нападение на других игроков</li>
+                    <li>Кражи имущества</li>
+                    <li>Нарушение законов организации</li>
+                    <li>Другие противоправные действия</li>
+                </ul>
+
+                <h2>Уровни розыска</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Уровень</th>
+                            <th>Описание</th>
+                            <th>Последствия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0</td>
+                            <td>Отсутствие розыска</td>
+                            <td>Нет последствий</td>
+                        </tr>
+                        <tr>
+                            <td>1-2</td>
+                            <td>Незначительный розыск</td>
+                            <td>Полиция может остановить для проверки</td>
+                        </tr>
+                        <tr>
+                            <td>3-4</td>
+                            <td>Средний розыск</td>
+                            <td>Полиция будет активно искать персонажа</td>
+                        </tr>
+                        <tr>
+                            <td>5+</td>
+                            <td>Высокий розыск</td>
+                            <td>Полиция имеет право на задержание с применением силы</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2>Снятие розыска</h2>
+                <p>Розыск можно снять следующими способами:</p>
+                <ul>
+                    <li>Оплата штрафов через банк или банкомат</li>
+                    <li>Использование услуг адвоката</li>
+                    <li>Отбывание тюремного срока</li>
+                    <li>Естественное снижение со временем (при отсутствии новых нарушений)</li>
+                </ul>
+
+                <h2>Проверка уровня розыска</h2>
+                <p>Текущий уровень розыска отображается в паспорте персонажа. Для просмотра паспорта используйте меню
+                    быстрых действий (Клавиша Tab > Посмотреть документы).</p>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Данные серверов
+        let serverData = {
+            server1: { online: 1247, ping: 24, queue: 12 },
+            server2: { online: 1032, ping: 31, queue: 8 },
+            server3: { online: 886, ping: 42, queue: 5 },
+            server4: { online: 745, ping: 18, queue: 3 }
+        };
+
+        // DOM элементы
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const categoryLinks = document.querySelectorAll('.category-link');
+        const subcategoryLinks = document.querySelectorAll('.subcategory-link');
+        const searchBtn = document.querySelector('.search-btn');
+        const searchInput = document.querySelector('.search-input');
+        const mainSearchBtn = document.querySelector('.main-search-btn');
+        const mainSearchInput = document.querySelector('.main-search-input');
+        const homePage = document.getElementById('home-page');
+        const articlesContainer = document.getElementById('articles-container');
+        const featureItems = document.querySelectorAll('.feature-item[data-article]');
+
+        // Инициализация
+        function init() {
+            setupEventListeners();
+            updateOnlineData();
+            simulateOnlineChanges();
+
+            // Показать домашнюю страницу по умолчанию
+            showHomePage();
+        }
+
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Переключение меню на мобильных
+            menuToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+
+            // Клики по категориям
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Если это ссылка на главную
+                    if (this.getAttribute('data-page') === 'home') {
+                        showHomePage();
+                        updateActiveNav(this);
+
+                        // На мобильных закрыть сайдбар после выбора
+                        if (window.innerWidth <= 1200) {
+                            toggleSidebar();
+                        }
+                        return;
+                    }
+
+                    // Переключить активное состояние категории
+                    const parentItem = this.closest('.category-item');
+                    const isActive = parentItem.classList.contains('active');
+
+                    // Закрыть все категории
+                    document.querySelectorAll('.category-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+
+                    // Открыть текущую, если она была закрыта
+                    if (!isActive) {
+                        parentItem.classList.add('active');
+                    }
+
+                    // Обновить активную навигацию
+                    updateActiveNav(this);
+
+                    // На мобильных закрыть сайдбар после выбора
+                    if (window.innerWidth <= 1200) {
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Клики по подкатегориям
+            subcategoryLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Убрать активный класс у всех ссылок
+                    subcategoryLinks.forEach(l => l.classList.remove('active'));
+
+                    // Добавить активный класс к текущей ссылке
+                    this.classList.add('active');
+
+                    // Получить ID статьи
+                    const articleId = this.getAttribute('data-article');
+
+                    // Показать статью
+                    showArticle(articleId);
+
+                    // На мобильных закрыть сайдбар
+                    if (window.innerWidth <= 1200) {
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Клики по популярным статьям на главной
+            featureItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    const articleId = this.getAttribute('data-article');
+                    showArticle(articleId);
+                });
+            });
+
+            // Поиск в хедере
+            searchBtn.addEventListener('click', () => performSearch(searchInput.value));
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    performSearch(this.value);
+                }
+            });
+
+            // Поиск на главной
+            mainSearchBtn.addEventListener('click', () => performSearch(mainSearchInput.value));
+            mainSearchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    performSearch(this.value);
+                }
+            });
+        }
+
+        // Обновление активной навигации
+        function updateActiveNav(activeLink) {
+            // Сбросить активные состояния
+            categoryLinks.forEach(link => link.classList.remove('active'));
+
+            // Установить активное состояние для выбранной ссылки
+            activeLink.classList.add('active');
+        }
+
+        // Переключение боковой панели на мобильных
+        function toggleSidebar() {
+            if (window.innerWidth <= 1200) {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            }
+        }
+
+        // Показать домашнюю страницу
+        function showHomePage() {
+            // Скрыть все страницы со статьями
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Удалить все статьи из контейнера
+            articlesContainer.innerHTML = '';
+
+            // Показать домашнюю страницу
+            homePage.classList.add('active');
+
+            // Прокрутить вверх
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Показать статью
+        function showArticle(articleId) {
+            // Скрыть домашнюю страницу
+            homePage.classList.remove('active');
+
+            // Скрыть все существующие статьи
+            articlesContainer.innerHTML = '';
+
+            // Получить шаблон статьи
+            const template = document.getElementById(`${articleId}-template`);
+
+            if (template) {
+                // Клонировать шаблон
+                const articleElement = document.importNode(template.content, true);
+
+                // Добавить на страницу
+                articlesContainer.appendChild(articleElement);
+
+                // Прокрутить к статье
+                articlesContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // Если статья не найдена, показать заглушку
+                showHomePage();
+                alert('Статья находится в разработке. Содержимое будет добавлено в ближайшее время.');
+            }
+        }
+
+        // Поиск
+        function performSearch(query) {
+            const searchQuery = query.trim();
+
+            if (searchQuery === '') {
+                alert('Введите поисковый запрос');
+                return;
+            }
+
+            // Простой поиск по заголовкам статей
+            const articleTemplates = [
+                'voice-chat', 'quick-menu', 'interaction-mode', 'passive-mode', 'green-zone',
+                'temporary-jobs', 'main-jobs', 'employment', 'driving-school', 'businesses',
+                'housing', 'personal-transport', 'weapons', 'phone', 'character-level',
+                'wanted', 'documents', 'skills', 'hunger'
+            ];
+
+            let foundArticle = null;
+
+            // Ищем совпадение в заголовках статей
+            for (const articleId of articleTemplates) {
+                const template = document.getElementById(`${articleId}-template`);
+                if (template) {
+                    const title = template.content.querySelector('.article-title').textContent.toLowerCase();
+                    if (title.includes(searchQuery.toLowerCase())) {
+                        foundArticle = articleId;
+                        break;
+                    }
+                }
+            }
+
+            if (foundArticle) {
+                // Найти соответствующую ссылку в сайдбаре и активировать ее
+                const targetLink = document.querySelector(`.subcategory-link[data-article="${foundArticle}"]`);
+                if (targetLink) {
+                    // Активировать родительскую категорию
+                    const parentCategory = targetLink.closest('.category-item');
+                    document.querySelectorAll('.category-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    parentCategory.classList.add('active');
+
+                    // Активировать ссылку
+                    subcategoryLinks.forEach(l => l.classList.remove('active'));
+                    targetLink.classList.add('active');
+
+                    // Показать статью
+                    showArticle(foundArticle);
+                } else {
+                    // Если не нашли ссылку, просто показать статью
+                    showArticle(foundArticle);
+                }
+            } else {
+                alert(`По запросу "${searchQuery}" ничего не найдено. Попробуйте другой запрос.`);
+            }
+
+            // Очистить поля поиска
+            searchInput.value = '';
+            mainSearchInput.value = '';
+        }
+
+        // Обновление данных онлайн
+        function updateOnlineData() {
+            // Обновление счетчиков
+            const serverCards = document.querySelectorAll('.server-card');
+
+            serverCards.forEach((card, index) => {
+                const serverKey = `server${index + 1}`;
+                const data = serverData[serverKey];
+
+                if (data) {
+                    card.querySelector('.online-count').textContent = data.online.toLocaleString();
+                    card.querySelector('.server-info').innerHTML = `
+                        <div>Пинг: ${data.ping} мс</div>
+                        <div>Очередь: ${data.queue}</div>
+                    `;
+                }
+            });
+
+            // Обновление общего онлайна
+            const totalOnline = Object.values(serverData).reduce((sum, server) => sum + server.online, 0);
+            document.getElementById('totalOnline').textContent = totalOnline.toLocaleString();
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
